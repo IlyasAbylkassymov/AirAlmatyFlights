@@ -13,5 +13,6 @@ public class AddFlightCommandValidator : AbstractValidator<AddFlightCommand>
         RuleFor(q => q.Status).NotNull().NotEmpty().WithMessage("Status cannot be empty nor null.");
         RuleFor(q => q.Departure.ToString()).SetValidator(new DateTimeValidator());
         RuleFor(q => q.Arrival.ToString()).SetValidator(new DateTimeValidator());
+        RuleFor(q => q.Arrival).GreaterThan(q => q.Departure).WithMessage("Arrival time must be later than Departure time");
     }
 }
