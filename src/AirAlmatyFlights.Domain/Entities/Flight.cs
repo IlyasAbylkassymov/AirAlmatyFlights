@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AirAlmatyFlights.Domain.Entities;
 
-[Table(name: "Flight", Schema = "public")]
+[Table(name: "Flight", Schema = "dbo")]
 public class Flight : BaseEntity
 {
     [Column(name: "origin")]

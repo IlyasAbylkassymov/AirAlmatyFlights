@@ -14,12 +14,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection ConfigureInfrastructurePersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<DataContext>(options =>
-        options.UseSqlServer(configuration.GetConnectionString(nameof(AppConfig.ConnectionStrings.DbConnection))));
+        options.UseSqlServer(configuration.GetSection(AppConfig.SectionName).GetConnectionString(nameof(AppConfig.ConnectionStrings.DbConnection))));
         return services;
     }
     public static IServiceCollection ConfigureInfrastructureRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddStackExchangeRedisCache(options => { options.Configuration = configuration.GetConnectionString(nameof(AppConfig.ConnectionStrings.Redis)); });
+        services.AddStackExchangeRedisCache(options => { options.Configuration = configuration.GetSection(AppConfig.SectionName).GetConnectionString(nameof(AppConfig.ConnectionStrings.Redis)); });
         return services;
     }
 

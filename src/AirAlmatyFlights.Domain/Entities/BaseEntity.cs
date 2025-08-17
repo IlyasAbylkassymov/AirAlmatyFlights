@@ -6,6 +6,6 @@ namespace AirAlmatyFlights.Domain.Entities;
 public abstract class BaseEntity
 {
     [Key]
-    [Column(name:"id")]
+    [Column(name:"Id")]
     public int Id { get; set; }
 }

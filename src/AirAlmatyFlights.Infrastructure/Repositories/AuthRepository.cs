@@ -25,7 +25,7 @@ public class AuthRepository : IAuthRepository
         try
         {
             roleCode = await _dataContext.Users
-                .Where(u => u.UserName == userName && u.Password == password)
+                .Where(u => u.Username == userName && u.Password == password)
                 .Join(_dataContext.Roles,
                     user => user.RoleId,
                     role => role.Id,

@@ -46,16 +46,15 @@ public class FlightRepository : IFlightRepository
                 .Where(f => f.Origin == origin && f.Destination == destination)
                 .OrderBy(f => f.Arrival)
                 .ToListAsync();
-            if (result.Any())
+            if (!result.Any())
             {
                 _logger.LogError("{Message} {Action} {Date}",
                     "Couldn't get data by request", nameof(GetFlightList), DateTime.Now);
                 return Result.Failure<IEnumerable<Flight>>(DomainError.NotFound);
             }
 
-            var expirationTime = _appConfig.RedisOptions.ExpirationInSeconds;
             await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(result),
-                new DistributedCacheEntryOptions { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(expirationTime) });
+                new DistributedCacheEntryOptions { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(_appConfig.RedisOptions.ExpirationInSeconds) });
         }
         catch (DatabaseException ex)
         {

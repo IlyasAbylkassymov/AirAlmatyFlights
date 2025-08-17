@@ -2,7 +2,7 @@
 
 namespace AirAlmatyFlights.Domain.Entities;
 
-[Table(name: "Role", Schema = "public")]
+[Table(name: "Role", Schema = "dbo")]
 public class Role : BaseEntity
 {
     [Column(name: "code")]
