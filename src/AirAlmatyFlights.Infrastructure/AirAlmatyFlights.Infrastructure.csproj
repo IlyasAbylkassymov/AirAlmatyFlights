@@ -18,4 +18,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AirAlmatyFlights.Application\AirAlmatyFlights.Application.csproj" />
+    <ProjectReference Include="..\AirAlmatyFlights.Domain\AirAlmatyFlights.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

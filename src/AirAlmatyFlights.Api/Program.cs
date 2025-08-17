@@ -3,6 +3,9 @@ using AirAlmatyFlights.Api.Common.WebHostOptions;
 using AirAlmatyFlights.Api.Middleware;
 using AirAlmatyFlights.Api.Swagger;
 using AirAlmatyFlights.Api.Versioning;
+using AirAlmatyFlights.Application;
+using AirAlmatyFlights.Application.Options;
+using AirAlmatyFlights.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
@@ -21,6 +24,12 @@ try
     
     builder.ConfigureHostVersioning();
     builder.ConfigureWebHost();
+    builder.Services.ConfigureApplicationAssemblies();
+
+    builder.Services
+        .ConfigureInfrastructurePersistence(builder.Configuration)
+        .ConfigureInfrastructureRedisCache(builder.Configuration)
+        .ConfigureInfrastructureServices();
 
     builder.Services.AddAuthentication("Bearer")
         .AddJwtBearer("Bearer", options =>
@@ -34,7 +43,7 @@ try
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("f2a1ed52710d4533bde25be6da03b6e3"))
             };
         });
-
+    builder.Services.Configure<AppConfig>(builder.Configuration.GetSection(AppConfig.SectionName));
     builder.Services.AddAuthorization();
 
     var app = builder.Build();

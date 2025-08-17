@@ -8,8 +8,8 @@ public class WebHostOptions
         WebAddress = webAddress;
     }
 
-    public const string InstanceSectionName = $"{nameof(WebHostOptions)}:InstanceName";
-    public const string WebAddressSectionName = $"{nameof(WebHostOptions)}:WebAddress";
+    public const string InstanceSectionName = "AppConfig:WebHostOptions:InstanceName";
+    public const string WebAddressSectionName = "AppConfig:WebHostOptions:WebAddress";
     public string InstanceName { get; init; }
     public string WebAddress { get; init; }
 }
