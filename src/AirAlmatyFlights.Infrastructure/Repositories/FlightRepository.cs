@@ -36,11 +36,11 @@ public class FlightRepository : IFlightRepository
         IEnumerable<Flight> result = Enumerable.Empty<Flight>();
         try
         {
-            //var cacheKey = new StringBuilder(_appConfig.RedisOptions.GetFlightList).Append(userName).ToString();
-            //var cacheFlightList = await _distributedCache.GetStringAsync(cacheKey);
-            //if (!string.IsNullOrEmpty(cacheFlightList))
-            //    return Result.Success(JsonConvert.DeserializeObject<IEnumerable<Flight>>(cacheFlightList)
-            //                          ?? throw new Exception(nameof(cacheFlightList)));
+            var cacheKey = new StringBuilder(_appConfig.RedisOptions.GetFlightList).Append(userName).ToString();
+            var cacheFlightList = await _distributedCache.GetStringAsync(cacheKey);
+            if (!string.IsNullOrEmpty(cacheFlightList))
+                return Result.Success(JsonConvert.DeserializeObject<IEnumerable<Flight>>(cacheFlightList)
+                                      ?? throw new Exception(nameof(cacheFlightList)));
 
             if (string.IsNullOrEmpty(origin))
                 result = await GetFlightsFilteredByDestination(destination);
@@ -56,8 +56,8 @@ public class FlightRepository : IFlightRepository
                 return Result.Failure<IEnumerable<Flight>>(DomainError.NotFound);
             }
 
-            //await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(result.OrderBy(f => f.Arrival)),
-            //    new DistributedCacheEntryOptions { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(_appConfig.RedisOptions.ExpirationInSeconds) });
+            await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(result.OrderBy(f => f.Arrival)),
+                new DistributedCacheEntryOptions { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(_appConfig.RedisOptions.ExpirationInSeconds) });
         }
         catch (DatabaseException ex)
         {
