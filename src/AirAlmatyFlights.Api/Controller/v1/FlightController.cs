@@ -22,7 +22,7 @@ public class FlightController : BaseController
     [HttpGet("list")]
     [Authorize]
     [ProducesResponseType(statusCode: 200, type: typeof(Result<IEnumerable<Flight>>))]
-    public async Task<IActionResult> GetFlightList(string origin, string destination)
+    public async Task<IActionResult> GetFlightList(string? origin, string? destination)
     {
         var usernameResult = await Mediator.Send(new GetTokenDataQuery(HttpContext.Request.Headers[AuthorizationConstants.AuthorizationHeaderKey]));
         if (usernameResult.IsFailed)

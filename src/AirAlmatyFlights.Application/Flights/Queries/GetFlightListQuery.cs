@@ -4,4 +4,4 @@ using MediatR;
 
 namespace AirAlmatyFlights.Application.Flights.Queries;
 
-public record GetFlightListQuery(string Origin, string Destination, string Username) : IRequest<Result<IEnumerable<Flight>>> { }
+public record GetFlightListQuery(string? Origin, string? Destination, string Username) : IRequest<Result<IEnumerable<Flight>>> { }

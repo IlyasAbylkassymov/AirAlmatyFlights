@@ -36,16 +36,19 @@ public class FlightRepository : IFlightRepository
         IEnumerable<Flight> result = Enumerable.Empty<Flight>();
         try
         {
-            var cacheKey = new StringBuilder(_appConfig.RedisOptions.GetFlightList).Append(userName).ToString();
-            var cacheFlightList = await _distributedCache.GetStringAsync(cacheKey);
-            if (!string.IsNullOrEmpty(cacheFlightList))
-                return Result.Success(JsonConvert.DeserializeObject<IEnumerable<Flight>>(cacheFlightList)
-                                      ?? throw new Exception(nameof(cacheFlightList)));
+            //var cacheKey = new StringBuilder(_appConfig.RedisOptions.GetFlightList).Append(userName).ToString();
+            //var cacheFlightList = await _distributedCache.GetStringAsync(cacheKey);
+            //if (!string.IsNullOrEmpty(cacheFlightList))
+            //    return Result.Success(JsonConvert.DeserializeObject<IEnumerable<Flight>>(cacheFlightList)
+            //                          ?? throw new Exception(nameof(cacheFlightList)));
 
-            result = await _dataContext.Flights
-                .Where(f => f.Origin == origin && f.Destination == destination)
-                .OrderBy(f => f.Arrival)
-                .ToListAsync();
+            if (string.IsNullOrEmpty(origin))
+                result = await GetFlightsFilteredByDestination(destination);
+            else if (string.IsNullOrEmpty(destination))
+                result = await GetFlightsFilteredByOrigin(origin);
+            else
+                result = await GetFlightsFilteredByOriginAndDestination(origin, destination);
+
             if (!result.Any())
             {
                 _logger.LogError("{Message} {Action} {Date}",
@@ -53,8 +56,8 @@ public class FlightRepository : IFlightRepository
                 return Result.Failure<IEnumerable<Flight>>(DomainError.NotFound);
             }
 
-            await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(result),
-                new DistributedCacheEntryOptions { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(_appConfig.RedisOptions.ExpirationInSeconds) });
+            //await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(result.OrderBy(f => f.Arrival)),
+            //    new DistributedCacheEntryOptions { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(_appConfig.RedisOptions.ExpirationInSeconds) });
         }
         catch (DatabaseException ex)
         {
@@ -88,7 +91,7 @@ public class FlightRepository : IFlightRepository
             };
 
             await _dataContext.AddAsync(model);
-            if(await _dataContext.SaveChangesAsync() == 0)
+            if (await _dataContext.SaveChangesAsync() == 0)
                 return Result.Failure(DomainError.DatabaseFailed);
         }
         catch (DatabaseException ex)
@@ -146,4 +149,9 @@ public class FlightRepository : IFlightRepository
 
         return Result.Success();
     }
+
+    private async Task<IEnumerable<Flight>> GetFlightsFilteredByOrigin(string origin) => await _dataContext.Flights.Where(f => f.Origin == origin).ToListAsync();
+    private async Task<IEnumerable<Flight>> GetFlightsFilteredByDestination(string destination) => await _dataContext.Flights.Where(f => f.Destination == destination).ToListAsync();
+
+    private async Task<IEnumerable<Flight>> GetFlightsFilteredByOriginAndDestination(string origin,string destination) => await _dataContext.Flights.Where(f => f.Origin == origin && f.Destination == destination).ToListAsync();
 }
