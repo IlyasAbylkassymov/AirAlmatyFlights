@@ -11,9 +11,7 @@ public static class WebHostServiceExtensions
     public static WebApplicationBuilder ConfigureWebHost(this WebApplicationBuilder builder)
     {
         if (builder.Environment.EnvironmentName.Equals(EnvironmentConstants.Test))
-        {
             builder.WebHost.UseUrls(builder.Configuration[WebHostOptions.WebHostOptions.WebAddressSectionName]);
-        }
 
         builder.Services.AddControllers()
             .AddNewtonsoftJson(x =>

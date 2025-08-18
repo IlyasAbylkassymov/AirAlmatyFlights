@@ -8,8 +8,8 @@ public class DataContext : DbContext, IDataContext
 {
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-    public DbSet<Role> Roles { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<Flight> Flights { get; set; }
+    public DbSet<Role> Roles { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Flight> Flights { get; set; } = null!;
 
 }

@@ -17,6 +17,12 @@ public class AuthorizationController : BaseController
 
     public AuthorizationController(IOptions<AppConfig> appConfigOptions) => _appConfig = appConfigOptions.Value;
 
+
+    /// <summary>
+    /// Получить токен авторизации
+    /// </summary>
+    /// <param name="loginRequest"></param>
+    /// <returns>Токен</returns>
     [HttpPost("token")]
     [ProducesResponseType(typeof(Result<string>), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]

@@ -31,7 +31,7 @@ public class FlightRepository : IFlightRepository
         _appConfig = appConfigOptions.Value;
     }
 
-    public async Task<Result<IEnumerable<Flight>>> GetFlightList(string origin, string destination, string userName)
+    public async Task<Result<IEnumerable<Flight>>> GetFlightList(string? origin, string? destination, string userName)
     {
         IEnumerable<Flight> result = Enumerable.Empty<Flight>();
         try
@@ -43,7 +43,7 @@ public class FlightRepository : IFlightRepository
                                       ?? throw new Exception(nameof(cacheFlightList)));
 
             if (string.IsNullOrEmpty(origin))
-                result = await GetFlightsFilteredByDestination(destination);
+                result = await GetFlightsFilteredByDestination(destination!);
             else if (string.IsNullOrEmpty(destination))
                 result = await GetFlightsFilteredByOrigin(origin);
             else
@@ -56,7 +56,9 @@ public class FlightRepository : IFlightRepository
                 return Result.Failure<IEnumerable<Flight>>(DomainError.NotFound);
             }
 
-            await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(result.OrderBy(f => f.Arrival)),
+            result = result.OrderBy(f => f.Arrival);
+
+            await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(result),
                 new DistributedCacheEntryOptions { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(_appConfig.RedisOptions.ExpirationInSeconds) });
         }
         catch (DatabaseException ex)

@@ -5,7 +5,6 @@ using AirAlmatyFlights.Application.Interfaces.Repositories;
 using AirAlmatyFlights.Domain.Common.Enums;
 using AirAlmatyFlights.Domain.Entities;
 using KDS.Primitives.FluentResult;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace AirAlmatyFlights.Tests;
 
@@ -17,7 +16,7 @@ public class MockFlightRepository : IFlightRepository
         return Result.Success();
     }
 
-    public async Task<Result<IEnumerable<Flight>>> GetFlightList(string origin, string destination, string userName)
+    public async Task<Result<IEnumerable<Flight>>> GetFlightList(string? origin, string? destination, string userName)
     {
         await Task.Yield();
         IEnumerable<Flight> flights = new Flight[1];
@@ -36,8 +35,8 @@ public class FlightTests
     [Fact]
     public async Task AddFlightCommandTest()
     {
-        var tfr = new MockFlightRepository();
-        var afch = new AddFlightCommandHandler(tfr);
+        var mfr = new MockFlightRepository();
+        var afch = new AddFlightCommandHandler(mfr);
         var result = await afch.Handle(new AddFlightCommand("test", "test", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddHours(5), Status.InTime, "test"), CancellationToken.None);
         Assert.True(result.IsSuccess);
     }
@@ -46,8 +45,8 @@ public class FlightTests
     [Fact]
     public async Task UpdateFlightCommandTest()
     {
-        var tfr = new MockFlightRepository();
-        var ufch = new UpdateFlightCommandHandler(tfr);
+        var mfr = new MockFlightRepository();
+        var ufch = new UpdateFlightCommandHandler(mfr);
         var result = await ufch.Handle(new UpdateFlightCommand(1, Status.InTime, "test"), CancellationToken.None);
         Assert.True(result.IsSuccess);
     }
@@ -55,8 +54,8 @@ public class FlightTests
     [Fact]
     public async Task GetFlightListQueryHandlerTest()
     {
-        var tfr = new MockFlightRepository();
-        var gflqh = new GetFlightListQueryHandler(tfr);
+        var mfr = new MockFlightRepository();
+        var gflqh = new GetFlightListQueryHandler(mfr);
         var result = await gflqh.Handle(new GetFlightListQuery("test", "test", "test"), CancellationToken.None);
         Assert.True(result.IsSuccess);
     }

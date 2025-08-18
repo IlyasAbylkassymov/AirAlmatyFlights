@@ -7,7 +7,7 @@ namespace AirAlmatyFlights.Application.Interfaces.Repositories;
 
 public interface IFlightRepository
 {
-    Task<Result<IEnumerable<Flight>>> GetFlightList(string origin, string destination, string userName);
+    Task<Result<IEnumerable<Flight>>> GetFlightList(string? origin, string? destination, string userName);
     Task<Result> AddFlight(FlightDto request);
     Task<Result> UpdateFlight(int id, Status status, string userName);
 }

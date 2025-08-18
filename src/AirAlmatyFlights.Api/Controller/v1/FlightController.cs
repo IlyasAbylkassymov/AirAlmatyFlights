@@ -19,6 +19,12 @@ namespace AirAlmatyFlights.Api.Controller.v1;
 public class FlightController : BaseController
 {
 
+    /// <summary>
+    /// Получить список полетов, отфильтрованный по месту вылета или месту назначения
+    /// </summary>
+    /// <param name="origin">Место вылета</param>
+    /// <param name="destination">Место назначения</param>
+    /// <returns>Список полетов</returns>
     [HttpGet("list")]
     [Authorize]
     [ProducesResponseType(statusCode: 200, type: typeof(Result<IEnumerable<Flight>>))]
@@ -32,6 +38,11 @@ public class FlightController : BaseController
         return getFlightListResult.IsFailed ? ErrorResponse(getFlightListResult.Error) : Ok(getFlightListResult);
     }
 
+    /// <summary>
+    /// Добавить новый полет в список (доступно только модераторам)
+    /// </summary>
+    /// <param name="addFlightRequest">Новый полет</param>
+    /// <returns></returns>
     [Authorize(Roles = AuthorizationConstants.ModeratorRoleName)]
     [HttpPost("add")]
     [ProducesResponseType(statusCode: 200, type: typeof(Result))]
@@ -45,6 +56,12 @@ public class FlightController : BaseController
         return addFlightResult.IsFailed ? ErrorResponse(addFlightResult.Error) : Ok(addFlightResult);
     }
 
+    /// <summary>
+    /// Изменить статус полета (доступно только модераторам)
+    /// </summary>
+    /// <param name="id">Идентификатор полета</param>
+    /// <param name="status">Новый выбранный статус</param>
+    /// <returns></returns>
     [Authorize(Roles = AuthorizationConstants.ModeratorRoleName)]
     [HttpPut("update")]
     [ProducesResponseType(statusCode: 200, type: typeof(Result))]
